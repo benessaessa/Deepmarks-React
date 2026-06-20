@@ -23,9 +23,7 @@ jobs:
         run: npm ci
 
       - name: Build into docs
-        env:
-          REPO_NAME: ${{ github.event.repository.name }}
-        run: npx vite build --outDir docs --base /${{ env.REPO_NAME }}/
+        run: npm run build:docs
 
       - name: Commit and push `docs` to main
         run: |

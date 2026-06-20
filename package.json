@@ -10,7 +10,7 @@
     "deploy": "npx gh-pages -d dist",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build:docs": "vite build --outDir docs --base /$npm_package_name/"
+    "build:docs": "node scripts/build-docs.cjs"
   },
   "dependencies": {
     "react": "^19.2.7",
