@@ -1,0 +1,36 @@
+name: Build to docs and commit to main
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-commit:
+    if: "!contains(github.event.head_commit.message, 'skip-docs-deploy')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build into docs
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: npx vite build --outDir docs --base /${{ env.REPO_NAME }}/
+
+      - name: Commit and push `docs` to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs -A
+          git commit -m "chore: update docs for GitHub Pages [skip-docs-deploy]" || echo "no changes to commit"
+          git push origin HEAD:main
