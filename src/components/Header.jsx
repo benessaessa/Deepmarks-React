@@ -64,8 +64,28 @@ export default function Header() {
     navigate('/')
   }
 
+  const closeOffcanvas = () => {
+    const offcanvasEl = document.getElementById('navMenuOffcanvas')
+    if (!offcanvasEl) return
+
+    const bootstrapOffcanvas = window.bootstrap?.Offcanvas
+    const bsInstance = bootstrapOffcanvas?.getInstance(offcanvasEl) || (bootstrapOffcanvas ? new bootstrapOffcanvas(offcanvasEl) : null)
+    if (bsInstance?.hide) {
+      bsInstance.hide()
+    }
+
+    offcanvasEl.classList.remove('show')
+    document.body.style.overflow = ''
+    document.body.style.paddingRight = ''
+    document.body.classList.remove('modal-open', 'offcanvas-open')
+
+    const backdrop = document.querySelector('.offcanvas-backdrop')
+    if (backdrop) backdrop.remove()
+  }
+
   const scrollLink = (id) => (e) => {
     e.preventDefault()
+    closeOffcanvas()
 
     const goToHomeAndScroll = () => {
       navigate('/')
@@ -90,17 +110,11 @@ export default function Header() {
     }
 
     if (location.pathname !== '/') {
-      goToHomeAndScroll()
+      navigate('/', { state: { scrollToId: id } })
       return
     }
 
     scrollToId(id)
-
-    // close offcanvas (mobile) if open
-    const offcanvasEl = document.getElementById('navMenuOffcanvas')
-    if (offcanvasEl?.classList?.contains('show')) {
-      offcanvasEl.classList.remove('show')
-    }
   }
 
   return (
@@ -194,7 +208,7 @@ export default function Header() {
         {/* Offcanvas (mobile) */}
         <div
           className="offcanvas offcanvas-start d-lg-none d-md-block"
-          tabindex="-1"
+          tabIndex="-1"
           id="navMenuOffcanvas"
           aria-labelledby="navMenuOffcanvasLabel"
         >
@@ -229,7 +243,12 @@ export default function Header() {
                 </a>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/contact">
+                <Link className="nav-link" to="/blogs" onClick={closeOffcanvas}>
+                  Blogs
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/contact" onClick={closeOffcanvas}>
                   Contact
                 </Link>
               </li>

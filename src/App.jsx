@@ -9,23 +9,54 @@ import { useReveal } from './hooks/useReveal'
 import './styles/style.scss'
 
 function useScrollToTopOnRouteChange() {
-  const { pathname } = useLocation()
+  const location = useLocation()
 
-  // Runs after navigation + after the new route commits.
-  // requestAnimationFrame helps ensure the browser has updated layout.
   useEffect(() => {
+    if (location.pathname === '/' && location.state?.scrollToId) {
+      return
+    }
+
     requestAnimationFrame(() => {
       window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
     })
-  }, [pathname])
+  }, [location.pathname, location.state])
 }
 
+function useScrollToStateTarget() {
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.pathname !== '/' || !location.state?.scrollToId) {
+      return
+    }
+
+    const scrollToId = location.state.scrollToId
+    let attempts = 0
+    const maxAttempts = 50
+    const interval = setInterval(() => {
+      attempts += 1
+      const el = document.getElementById(scrollToId)
+      if (el) {
+        clearInterval(interval)
+        const navbar = document.getElementById('navbar')
+        const offset = navbar ? navbar.offsetHeight + 12 : 80
+        const y = el.getBoundingClientRect().top + window.scrollY - offset
+        window.scrollTo({ top: y, behavior: 'smooth' })
+      } else if (attempts >= maxAttempts) {
+        clearInterval(interval)
+      }
+    }, 30)
+
+    return () => clearInterval(interval)
+  }, [location])
+}
 
 export default function App() {
   const location = useLocation()
   useReveal(location.pathname)
 
   useScrollToTopOnRouteChange()
+  useScrollToStateTarget()
 
   return (
     <Routes>
