@@ -1,16 +1,16 @@
 {
   "name": "deepmarks-react",
+   "homepage": "https://benessaessa.github.io/Deepmarks-React/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "predeploy": "node scripts/build-with-base.cjs",
-    "deploy": "npx gh-pages -d dist",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build:docs": "node scripts/build-docs.cjs"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "react": "^19.2.7",
@@ -25,9 +25,9 @@
     "eslint": "^10.3.0",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "gh-pages": "^5.0.0",
     "globals": "^17.6.0",
     "sass-embedded": "^1.100.0",
-    "vite": "^8.0.16",
-    "gh-pages": "^5.0.0"
+    "vite": "^8.0.16"
   }
 }
